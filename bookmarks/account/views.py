@@ -37,13 +37,17 @@ def dashboard(request):
 
 
 def register(request):
+    """Регистрация пользователя."""
     user_form = UserRegistrationForm(request.POST or None)
     if request.method == 'POST':
         if user_form.is_valid():
+            # Создаем объект пользователя, но не сохраняем его
             new_user = user_form.save(commit=False)
+            # Устанавливаем пароль пользователя из формы
             new_user.set_password(user_form.cleaned_data['password'])
             print(user_form.cleaned_data)
             new_user.save()
+            # Создаем профиль пользователя
             Profile.objects.create(user=new_user)
             return render(request,
                           'account/register_done.html',
@@ -53,24 +57,31 @@ def register(request):
 
 @login_required
 def edit(request):
+    """Редактирование профиля."""
     if request.method == 'POST':
+        # Создаем объект формы с данными текущего пользователя
+        # и передаем ей данные введенные пользователем
         user_form = UserEditForm(instance=request.user,
                                  data=request.POST)
+        # request.FILES - словарь, содержащий файлы
+        # загруженные пользователем в форму.
         profile_form = ProfileEditForm(
-                                    instance=request.user.profile,
-                                    data=request.POST,
-                                    files=request.FILES)
+            instance=request.user.profile,
+            data=request.POST,
+            files=request.FILES
+        )
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Profile updated '\
-                                      'successfully')
+            # Выводим сообщение об успешном обновлении профиля
+            messages.success(request, 'Profile updated successfully')
         else:
             messages.error(request, 'Error updating your profile')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
-                                    instance=request.user.profile)
+            instance=request.user.profile
+        )
     return render(request,
                   'account/edit.html',
                   {'user_form': user_form,
