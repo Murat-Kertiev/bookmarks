@@ -37,14 +37,11 @@ def image_detail(request, id, slug):
     return render(request, 'images/image/detail.html', context)
 
 
-@login_required
-@require_POST
 def image_like(request):
-    image_id = request.POST.get('id')
+    image = request.POST.get('id')
     action = request.POST.get('action')
-    if image_id and action:
+    if image and action:
         try:
-            image = Image.objects.get(id=image_id)
             if action == 'like':
                 image.users_like.add(request.user)
             else:
