@@ -44,7 +44,9 @@
     {% block content %}
     {% endblock %}
   </div>
+  <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
   <script>
+    const csrf_token = Cookies.get('csrftoken'); 
     document.addEventiListener('DOMContentLoaded', (event)=>{
       {% block domready %}
       {% endblock %}
