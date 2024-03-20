@@ -60,6 +60,7 @@ def register(request):
 
 
 @login_required
+def edit(request):
     """Редактирование профиля."""
     if request.method == 'POST':
         # Создаем объект формы с данными текущего пользователя
